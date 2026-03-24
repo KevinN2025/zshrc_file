@@ -1,17 +1,56 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
+export TMPDIR=$HOME/tmp
+
 # Alias list
 alias cls='clear'
-alias vi='nvim'
+alias nv='nvim'
+alias grep='rg'
+alias python='python3'
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
+export PATH=$PATH:/home/dispater/.local/bin
+
+# Oh my posh
+eval "$(oh-my-posh init zsh --config /home/dispater/Documents/repositories/oh-my-posh/themes/cloud-context.omp.json)"
+
+# --- FZF setup ---
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+#export FZF_DEFAULT_COMMAND="fd --type f --hidden --exclude .git"
+export FZF_DEFAULT_COMMAND='find . -type f'
+# Preview files with syntax highlighting
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border \
+--preview 'bat --style=numbers --color=always {} 2>/dev/null | head -500'"
+
+# Load fzf keybindings and completion (Homebrew install)
+#[ -f "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh" ] && source "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh"
+#[ -f "$(brew --prefix)/opt/fzf/shell/completion.zsh" ] && source "$(brew --prefix)/opt/fzf/shell/completion.zsh"
+
+# Quick file opener
+fo() {
+  local file
+  file=$(fzf) && nvim "$file"
+}
+
+# Quick directory jump
+fcd() {
+  local dir
+  dir=$(fd --type d | fzf) && cd "$dir"
+}
+
+# Kill process with fzf
+fkill() {
+  local pid
+  pid=$(ps -ef | fzf | awk '{print $2}') && kill -9 $pid
+}
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time Oh My Zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="obraun"
+#ZSH_THEME="strug"
+
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -106,3 +145,4 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
