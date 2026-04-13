@@ -3,7 +3,12 @@
 
 export TMPDIR=$HOME/tmp
 
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
 # Alias list
+alias src="source .zshrc"
 alias cls='clear'
 alias nv='nvim'
 alias grep='rg'
@@ -18,7 +23,7 @@ eval "$(oh-my-posh init zsh --config /home/dispater/Documents/repositories/oh-my
 # --- FZF setup ---
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 #export FZF_DEFAULT_COMMAND="fd --type f --hidden --exclude .git"
-export FZF_DEFAULT_COMMAND='find . -type f'
+export FZF_DEFAULT_COMMAND='find . \( -type f -o -type d \) ! -path "*/\.*"'
 # Preview files with syntax highlighting
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border \
 --preview 'bat --style=numbers --color=always {} 2>/dev/null | head -500'"
@@ -26,6 +31,18 @@ export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border \
 # Load fzf keybindings and completion (Homebrew install)
 #[ -f "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh" ] && source "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh"
 #[ -f "$(brew --prefix)/opt/fzf/shell/completion.zsh" ] && source "$(brew --prefix)/opt/fzf/shell/completion.zsh"
+
+# fzf wrapper: cd into result if it's a directory
+fzf() {
+  local result
+  result=$(command fzf "$@")
+  [[ -z "$result" ]] && return 1
+  if [[ -d "$result" ]]; then
+    cd "$result"
+  else
+    echo "$result"
+  fi
+}
 
 # Quick file opener
 fo() {
@@ -146,3 +163,5 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+export EDITOR=nvim
+export VISUAL=nvim
